@@ -191,6 +191,34 @@ export const MusicForm = ({ formData, setFormData, isUploading, setIsUploading, 
         </div>
       </div>
 
+      {/* Album Artwork & Track Info Card */}
+      {formData.albumCover && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          padding: '10px 14px',
+          borderRadius: '12px',
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px solid rgba(168, 85, 247, 0.25)',
+          marginBottom: '16px'
+        }}>
+          <img
+            src={formData.albumCover}
+            alt="Album Art"
+            style={{ width: '48px', height: '48px', borderRadius: '10px', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.4)' }}
+          />
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {formData.trackTitle || 'Audio Track'}
+            </div>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {formData.artistName || 'Artist'} • Official Album Cover
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Audio File Upload & Player */}
       <div className="form-group">
         <label className="form-label">Audio File (MP3 / WAV / M4A / AAC)</label>

@@ -3,16 +3,14 @@ import { Navbar } from './components/Navbar';
 import { QRStudio } from './components/QRStudio';
 import { HistoryVault } from './components/HistoryVault';
 import { ScannerModal } from './components/ScannerModal';
-import { FirebaseModal } from './components/FirebaseModal';
 import { SharedContentViewer } from './views/SharedContentViewer';
-import { getFirebaseServices, initFirebase } from './config/firebase';
+import { initFirebase } from './config/firebase';
 
 export function App() {
   const [activeTab, setActiveTab] = useState('create'); // 'create' | 'vault'
   const [scannerOpen, setScannerOpen] = useState(false);
-  const [firebaseModalOpen, setFirebaseModalOpen] = useState(false);
-  const [isFirebaseConfigured, setIsFirebaseConfigured] = useState(false);
   const [viewerRecordId, setViewerRecordId] = useState(null);
+  const [resetGridTrigger, setResetGridTrigger] = useState(0);
 
   // Check URL hash for direct viewer links e.g. #view/123
   useEffect(() => {
@@ -31,10 +29,9 @@ export function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Initialize Firebase credentials check
+  // Initialize Firebase credentials check silently in the background
   useEffect(() => {
-    const status = initFirebase();
-    setIsFirebaseConfigured(status.isConfigured);
+    initFirebase();
   }, []);
 
   const handleNavigateToViewer = (id) => {
@@ -45,6 +42,12 @@ export function App() {
     window.location.hash = '';
     setViewerRecordId(null);
     setActiveTab('create');
+    setResetGridTrigger(prev => prev + 1);
+  };
+
+  const handleTabCreate = () => {
+    setActiveTab('create');
+    setResetGridTrigger(prev => prev + 1);
   };
 
   // If viewing a scanned QR code page
@@ -61,15 +64,15 @@ export function App() {
     <>
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        onTabCreate={handleTabCreate}
+        onSelectVault={() => setActiveTab('vault')}
         onOpenScanner={() => setScannerOpen(true)}
-        onOpenFirebase={() => setFirebaseModalOpen(true)}
-        isFirebaseConfigured={isFirebaseConfigured}
       />
 
       <main className="app-container">
         {activeTab === 'create' && (
           <QRStudio
+            resetGridTrigger={resetGridTrigger}
             onSavedSuccess={(savedRecord) => {
               // Optionally can offer a link to view in vault
             }}
@@ -81,7 +84,7 @@ export function App() {
             onSelectQR={(item) => {
               window.location.hash = `#view/${item.id}`;
             }}
-            onBackToCreate={() => setActiveTab('create')}
+            onBackToCreate={handleTabCreate}
           />
         )}
       </main>
@@ -91,13 +94,6 @@ export function App() {
         isOpen={scannerOpen}
         onClose={() => setScannerOpen(false)}
         onNavigateToViewer={handleNavigateToViewer}
-      />
-
-      {/* Firebase Cloud Settings Modal */}
-      <FirebaseModal
-        isOpen={firebaseModalOpen}
-        onClose={() => setFirebaseModalOpen(false)}
-        onConfigSaved={(configured) => setIsFirebaseConfigured(configured)}
       />
     </>
   );

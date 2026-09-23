@@ -1,13 +1,13 @@
 import React from 'react';
-import { QrCode, Sparkles, Database, ScanLine, Layers, CheckCircle2, Cloud } from 'lucide-react';
+import { QrCode, Sparkles, ScanLine, Layers } from 'lucide-react';
 
-export const Navbar = ({ activeTab, setActiveTab, onOpenScanner, onOpenFirebase, isFirebaseConfigured }) => {
+export const Navbar = ({ activeTab, onTabCreate, onOpenScanner, onSelectVault }) => {
   return (
     <>
       {/* Top Mobile/Desktop Header */}
       <header className="navbar">
         <div className="navbar-inner">
-          <div className="brand-badge" onClick={() => setActiveTab('create')}>
+          <div className="brand-badge" onClick={onTabCreate} style={{ cursor: 'pointer' }}>
             <div className="brand-logo-icon">
               <QrCode size={20} />
             </div>
@@ -22,16 +22,16 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenScanner, onOpenFirebase,
             <button
               id="tab-create-btn"
               className={`nav-tab-btn ${activeTab === 'create' ? 'active' : ''}`}
-              onClick={() => setActiveTab('create')}
+              onClick={onTabCreate}
             >
               <Sparkles size={16} />
-              <span>Create</span>
+              <span>Create Apps</span>
             </button>
 
             <button
               id="tab-vault-btn"
               className={`nav-tab-btn ${activeTab === 'vault' ? 'active' : ''}`}
-              onClick={() => setActiveTab('vault')}
+              onClick={onSelectVault}
             >
               <Layers size={16} />
               <span>Vault</span>
@@ -45,29 +45,7 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenScanner, onOpenFirebase,
               <ScanLine size={16} />
               <span>Scan QR</span>
             </button>
-
-            <button
-              id="firebase-status-btn"
-              className="firebase-status-chip"
-              onClick={onOpenFirebase}
-              title="Connected to Firebase Spark Plan"
-            >
-              <Cloud size={13} style={{ color: '#34d399' }} />
-              <span>Spark Cloud</span>
-            </button>
           </nav>
-
-          {/* Mobile Top Status Pill */}
-          <div className="mobile-top-action">
-            <button
-              className="firebase-status-chip"
-              onClick={onOpenFirebase}
-              title="Firebase Cloud Status"
-            >
-              <Cloud size={12} style={{ color: '#34d399' }} />
-              <span>Spark</span>
-            </button>
-          </div>
         </div>
       </header>
 
@@ -76,23 +54,12 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenScanner, onOpenFirebase,
         <button
           type="button"
           className={`mobile-bar-item ${activeTab === 'create' ? 'active' : ''}`}
-          onClick={() => setActiveTab('create')}
+          onClick={onTabCreate}
         >
           <div className="mobile-bar-icon-wrap">
             <Sparkles size={20} />
           </div>
           <span>Create</span>
-        </button>
-
-        <button
-          type="button"
-          className={`mobile-bar-item ${activeTab === 'vault' ? 'active' : ''}`}
-          onClick={() => setActiveTab('vault')}
-        >
-          <div className="mobile-bar-icon-wrap">
-            <Layers size={20} />
-          </div>
-          <span>Vault</span>
         </button>
 
         <button
@@ -108,15 +75,17 @@ export const Navbar = ({ activeTab, setActiveTab, onOpenScanner, onOpenFirebase,
 
         <button
           type="button"
-          className="mobile-bar-item"
-          onClick={onOpenFirebase}
+          className={`mobile-bar-item ${activeTab === 'vault' ? 'active' : ''}`}
+          onClick={onSelectVault}
         >
           <div className="mobile-bar-icon-wrap">
-            <Cloud size={20} />
+            <Layers size={20} />
           </div>
-          <span>Cloud</span>
+          <span>Vault</span>
         </button>
       </nav>
     </>
   );
 };
+
+export default Navbar;

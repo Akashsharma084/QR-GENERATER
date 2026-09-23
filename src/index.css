@@ -1008,3 +1008,623 @@ input::placeholder, textarea::placeholder {
   transform: translateX(4px);
 }
 
+/* ==========================================================================
+   Omni Robo Mascot & Logo Animations
+   ========================================================================== */
+
+.robo-animated .robo-antenna-bulb {
+  animation: roboBulbPulse 2s infinite ease-in-out;
+}
+
+.robo-animated .robo-antenna-ring {
+  animation: roboRingPing 2s infinite cubic-bezier(0, 0, 0.2, 1);
+  transform-origin: 24px 5px;
+}
+
+.robo-animated .robo-eye-left,
+.robo-animated .robo-eye-right {
+  animation: roboEyeBlink 3.8s infinite ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes roboBulbPulse {
+  0%, 100% { fill: #f472b6; filter: drop-shadow(0 0 2px #f472b6); }
+  50% { fill: #38bdf8; filter: drop-shadow(0 0 8px #38bdf8); }
+}
+
+@keyframes roboRingPing {
+  0% { r: 3px; opacity: 0.8; stroke-width: 1.5px; }
+  80%, 100% { r: 9px; opacity: 0; stroke-width: 0.5px; }
+}
+
+@keyframes roboEyeBlink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+
+.robo-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+  display: inline-block;
+  animation: livePulseDot 1.6s infinite ease-in-out;
+}
+
+@keyframes livePulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+/* ==========================================================================
+   App Launcher Grid & Feature Boxes
+   ========================================================================== */
+
+.app-launcher-wrapper {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 10px 16px 40px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.app-hub-hero {
+  text-align: center;
+  padding: 10px 12px 28px;
+}
+
+.app-hub-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: var(--primary-light);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.live-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: livePulseDot 1.5s infinite;
+}
+
+.app-hub-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.app-hub-subtitle {
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  color: var(--text-muted);
+  max-width: 580px;
+  margin: 0 auto 16px;
+  line-height: 1.55;
+}
+
+.current-draft-pill-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-bright);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  margin-top: 4px;
+}
+
+.current-draft-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #c7d2fe;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.current-draft-chip:hover {
+  background: rgba(99, 102, 241, 0.35);
+  color: #fff;
+}
+
+/* Feature Boxes Grid */
+.app-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .app-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.app-feature-box {
+  position: relative;
+  border-radius: 22px;
+  background: rgba(18, 25, 42, 0.72);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 22px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.app-feature-box:hover {
+  transform: translateY(-5px);
+  border-color: var(--box-accent);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7), 0 0 24px -4px var(--box-accent);
+}
+
+.app-feature-box:active {
+  transform: scale(0.98);
+}
+
+.app-feature-box.hero-box {
+  border-color: rgba(192, 132, 252, 0.45);
+  background: linear-gradient(135deg, rgba(28, 21, 48, 0.85) 0%, rgba(18, 25, 42, 0.85) 100%);
+  box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.25);
+}
+
+.app-feature-box.hero-box:hover {
+  border-color: #c084fc;
+  box-shadow: 0 18px 45px -10px rgba(168, 85, 247, 0.45), 0 0 35px rgba(236, 72, 153, 0.3);
+}
+
+.app-box-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.app-box-icon-container {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: var(--box-bg);
+  border: 1px solid var(--box-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.app-feature-box:hover .app-box-icon-container {
+  transform: scale(1.08);
+}
+
+.ai-icon-pulse {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(236, 72, 153, 0.35));
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+.app-box-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.03em;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.badge-ai {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #f0abfc;
+}
+
+.badge-payment {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.badge-movie {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #fb7185;
+}
+
+.badge-music {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #c084fc;
+}
+
+.badge-image {
+  background: rgba(14, 165, 233, 0.15);
+  border-color: rgba(14, 165, 233, 0.4);
+  color: #38bdf8;
+}
+
+.badge-doc {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.badge-info {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
+}
+
+.app-box-content {
+  flex-grow: 1;
+}
+
+.app-box-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.app-box-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.robo-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+.app-box-subtitle {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  min-height: 40px;
+}
+
+.app-box-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-box-tag {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.app-box-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--box-accent);
+  transition: transform 0.2s ease;
+}
+
+.app-feature-box:hover .app-box-action-btn {
+  transform: translateX(4px);
+}
+
+.app-box-glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--box-accent) 0%, transparent 70%);
+  opacity: 0.12;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.app-feature-box:hover .app-box-glow {
+  opacity: 0.25;
+}
+
+/* ==========================================================================
+   Studio Editor Sub-Header
+   ========================================================================== */
+
+.studio-view-container {
+  width: 100%;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.studio-sub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+}
+
+.back-to-apps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-bright);
+  color: #e2e8f0;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-to-apps-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateX(-3px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.studio-header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-robo-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #f0abfc;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.25);
+  transition: all 0.2s ease;
+}
+
+.ai-robo-trigger-btn:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(236, 72, 153, 0.35));
+  border-color: #c084fc;
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.45);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Active Feature Badge Header (Replaces Category Pills)
+   ========================================================================== */
+
+.active-feature-badge-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-bright);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   AI Robo Chatbot (Full Interactive Chatbox Experience)
+   ========================================================================== */
+
+.chatbot-container {
+  max-width: 860px;
+  margin: 0 auto;
+  background: rgba(15, 21, 38, 0.88);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 24px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 110px);
+  min-height: 560px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 35px rgba(168, 85, 247, 0.15);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@media (max-width: 640px) {
+  .chatbot-container {
+    height: calc(100vh - 135px);
+    border-radius: 18px;
+    min-height: auto;
+  }
+}
+
+.chatbot-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 15, 28, 0.75);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168, 85, 247, 0.3) transparent;
+}
+
+.chat-message-row {
+  display: flex;
+  gap: 10px;
+  max-width: 88%;
+}
+
+.chat-message-row.user-row {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-message-row.bot-row {
+  align-self: flex-start;
+}
+
+.chat-avatar-bot {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(236, 72, 153, 0.25));
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.chat-bubble {
+  padding: 13px 18px;
+  border-radius: 18px;
+  font-size: 0.88rem;
+  position: relative;
+  word-break: break-word;
+}
+
+.chat-bubble.bot-bubble {
+  background: rgba(24, 32, 54, 0.92);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  color: #f8fafc;
+  border-top-left-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.chat-bubble.user-bubble {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #ffffff;
+  border-top-right-radius: 4px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+}
+
+.chat-timestamp {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 6px;
+  text-align: right;
+}
+
+.chatbot-input-bar {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(10, 15, 28, 0.9);
+}
+
+.chatbot-input-field {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: #fff;
+  font-size: 0.88rem;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.chatbot-input-field:focus {
+  border-color: #c084fc;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chatbot-send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
+  transition: all 0.2s ease;
+}
+
+.chatbot-send-btn:hover:not(:disabled) {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.55);
+}
+
+.chatbot-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+

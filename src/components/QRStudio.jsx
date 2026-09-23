@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   CreditCard, Film, Music, Image as ImageIcon, FileText, UserPlus, 
-  Sparkles, Layers, Sliders, RefreshCw, QrCode, Wand2 
+  Sparkles, Layers, Sliders, RefreshCw, QrCode, ArrowLeft
 } from 'lucide-react';
 import { PaymentForm } from './forms/PaymentForm';
 import { MovieForm } from './forms/MovieForm';
@@ -9,9 +9,10 @@ import { MusicForm } from './forms/MusicForm';
 import { ImageForm } from './forms/ImageForm';
 import { DocumentForm } from './forms/DocumentForm';
 import { InfoForm } from './forms/InfoForm';
-import { AIStudioPrompt } from './ai/AIStudioPrompt';
+import { AIChatbot } from './ai/AIChatbot';
 import { CustomizerPanel } from './CustomizerPanel';
 import { QRPreview } from './QRPreview';
+import { AppLauncherGrid } from './AppLauncherGrid';
 import { generatePaymentURI } from '../utils/paymentHelper';
 import { generateVCard, generateWiFi } from '../utils/vcardHelper';
 import { saveQRRecord } from '../services/qrDataService';
@@ -134,17 +135,24 @@ const DEFAULT_PRESETS_BY_TYPE = {
   }
 };
 
-export const QRStudio = ({ onSavedSuccess }) => {
+export const QRStudio = ({ onSavedSuccess, resetGridTrigger }) => {
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'editor' | 'chatbot'
   const [contentType, setContentType] = useState('payment');
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isAIOpen, setIsAIOpen] = useState(false);
   const [recordId, setRecordId] = useState(() => 'omni_' + Math.random().toString(36).substring(2, 9));
+
+  // Reset to Grid when user clicks Create tab in navigation
+  useEffect(() => {
+    if (resetGridTrigger) {
+      setViewMode('grid');
+    }
+  }, [resetGridTrigger]);
 
   // Form State
   const [formData, setFormData] = useState({
     // Payment Defaults
-    paymentMode: 'direct', // 'direct' for GPay/PhonePe scanner, 'landing' for web page
+    paymentMode: 'direct',
     paymentMethod: 'upi',
     payeeName: 'Alex Coffee & Roastery',
     upiId: 'alexcoffee@okaxis',
@@ -212,8 +220,6 @@ export const QRStudio = ({ onSavedSuccess }) => {
   }, [recordId]);
 
   // Derive QR Data string:
-  // For Payment with Direct mode, encode upi://pay directly so GPay/PhonePe camera scanner opens payment instantly!
-  // For other modes or rich media, encode viewerUrl for the full interactive receiver page.
   const qrDataString = useMemo(() => {
     if (contentType === 'payment' && formData.paymentMode === 'direct') {
       const uri = generatePaymentURI(formData);
@@ -245,27 +251,30 @@ export const QRStudio = ({ onSavedSuccess }) => {
     }
   }, [contentType, formData]);
 
-  const handleApplyAIGeneration = (aiResult) => {
-    if (!aiResult) return;
-    if (aiResult.contentType) {
-      setContentType(aiResult.contentType);
+  const handleApplyChatbotGeneration = (qrResult) => {
+    if (!qrResult) return;
+    if (qrResult.recordId) {
+      setRecordId(qrResult.recordId);
     }
-    if (aiResult.formData) {
+    if (qrResult.contentType) {
+      setContentType(qrResult.contentType);
+    }
+    if (qrResult.formData) {
       setFormData(prev => ({
         ...prev,
-        ...aiResult.formData
+        ...qrResult.formData
       }));
     }
-    if (aiResult.customConfig) {
+    if (qrResult.customConfig) {
       setCustomConfig(prev => ({
         ...prev,
-        ...aiResult.customConfig
+        ...qrResult.customConfig
       }));
     }
+    setViewMode('editor');
   };
 
   // Auto-sync current record to Firestore & Local cache in real-time
-  // so scanning directly off the screen ALWAYS finds the content!
   useEffect(() => {
     const timer = setTimeout(() => {
       const record = {
@@ -303,144 +312,168 @@ export const QRStudio = ({ onSavedSuccess }) => {
     }
   };
 
+  // 1. If currently in Grid View, show AppLauncherGrid
+  if (viewMode === 'grid') {
+    return (
+      <AppLauncherGrid
+        onSelectApp={(appId) => {
+          handleTypeChange(appId);
+          setViewMode('editor');
+        }}
+        onOpenAI={() => setViewMode('chatbot')}
+      />
+    );
+  }
+
+  // 2. If currently in Chatbot View, show full interactive Chatbot
+  if (viewMode === 'chatbot') {
+    return (
+      <AIChatbot
+        onBackToGrid={() => setViewMode('grid')}
+        onApplyToStudio={handleApplyChatbotGeneration}
+      />
+    );
+  }
+
+  // 3. Otherwise in Studio Editor View - FOCUSED ONLY on the chosen feature!
   return (
-    <div className="studio-grid">
-      {/* Left Column: Form & Customizer */}
-      <div className="glass-panel">
-        {/* Top Header Row with Category Label & AI Mode Trigger */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)' }}>Choose Category:</span>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => setIsAIOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2))',
-              border: '1px solid rgba(168, 85, 247, 0.5)',
-              color: '#f0abfc',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 0 16px rgba(168, 85, 247, 0.25)'
-            }}
-          >
-            <Sparkles size={14} style={{ color: '#ec4899' }} />
-            <span>✨ Magic AI Prompt Mode</span>
-          </button>
-        </div>
+    <div className="studio-view-container">
+      {/* Studio Top Navigation Bar - Clean, only Back and Current Feature Name */}
+      <div className="studio-sub-header">
+        <button
+          type="button"
+          className="back-to-apps-btn"
+          onClick={() => setViewMode('grid')}
+          title="Return to Feature Apps Launcher"
+        >
+          <ArrowLeft size={16} />
+          <span>All Feature Apps</span>
+        </button>
 
-        {/* Content Type Pill Bar */}
-        <div className="content-type-selector">
-          {[
-            { id: 'payment', label: 'Payment', icon: <CreditCard size={16} /> },
-            { id: 'movie', label: 'Movie & Video', icon: <Film size={16} /> },
-            { id: 'music', label: 'Music & Audio', icon: <Music size={16} /> },
-            { id: 'image', label: 'Photo & Art', icon: <ImageIcon size={16} /> },
-            { id: 'document', label: 'Document', icon: <FileText size={16} /> },
-            { id: 'info', label: 'Info & vCard', icon: <UserPlus size={16} /> }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`type-pill ${tab.id} ${contentType === tab.id ? 'active' : ''}`}
-              onClick={() => handleTypeChange(tab.id)}
-            >
-              {tab.icon}
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Form Container */}
-        <div>
+        {/* Current Feature Name Badge */}
+        <div className="active-feature-badge-header">
           {contentType === 'payment' && (
-            <PaymentForm formData={formData} setFormData={setFormData} />
+            <>
+              <CreditCard size={18} style={{ color: '#34d399' }} />
+              <span>UPI & Instant Pay</span>
+            </>
           )}
-
           {contentType === 'movie' && (
-            <MovieForm
-              formData={formData}
-              setFormData={setFormData}
-              isUploading={isUploading}
-              setIsUploading={setIsUploading}
-            />
+            <>
+              <Film size={18} style={{ color: '#fb7185' }} />
+              <span>Movie & Video Cinema</span>
+            </>
           )}
-
           {contentType === 'music' && (
-            <MusicForm
-              formData={formData}
-              setFormData={setFormData}
-              isUploading={isUploading}
-              setIsUploading={setIsUploading}
-              recordId={recordId}
-            />
+            <>
+              <Music size={18} style={{ color: '#c084fc' }} />
+              <span>Music & Audio Player</span>
+            </>
           )}
-
           {contentType === 'image' && (
-            <ImageForm
-              formData={formData}
-              setFormData={setFormData}
-              isUploading={isUploading}
-              setIsUploading={setIsUploading}
-            />
+            <>
+              <ImageIcon size={18} style={{ color: '#38bdf8' }} />
+              <span>Photo & Art Gallery</span>
+            </>
           )}
-
           {contentType === 'document' && (
-            <DocumentForm
-              formData={formData}
-              setFormData={setFormData}
-              isUploading={isUploading}
-              setIsUploading={setIsUploading}
-            />
+            <>
+              <FileText size={18} style={{ color: '#fbbf24' }} />
+              <span>Smart PDF & Documents</span>
+            </>
           )}
-
           {contentType === 'info' && (
-            <InfoForm formData={formData} setFormData={setFormData} />
+            <>
+              <UserPlus size={18} style={{ color: '#818cf8' }} />
+              <span>vCard, WiFi & Links</span>
+            </>
           )}
         </div>
-
-        {/* Visual Customization Studio */}
-        <CustomizerPanel
-          customConfig={customConfig}
-          setCustomConfig={setCustomConfig}
-        />
       </div>
 
-      {/* Right Column: Live QR Preview & Actions */}
-      <QRPreview
-        dataString={qrDataString}
-        title={displayTitle}
-        contentType={contentType}
-        customConfig={customConfig}
-        onSaveRecord={handleSave}
-        isSaving={isSaving}
-        viewerUrl={viewerUrl}
-      />
+      <div className="studio-grid">
+        {/* Left Column: Form & Customizer for THIS FEATURE ONLY */}
+        <div className="glass-panel">
+          {/* Form Container */}
+          <div>
+            {contentType === 'payment' && (
+              <PaymentForm formData={formData} setFormData={setFormData} />
+            )}
 
-      {/* Floating QR Quick-View FAB for mobile */}
-      <button
-        type="button"
-        className="mobile-qr-fab"
-        onClick={() => {
-          document.querySelector('.qr-preview-wrapper')?.scrollIntoView({ behavior: 'smooth' });
-        }}
-      >
-        <QrCode size={16} />
-        <span>View QR Preview</span>
-      </button>
+            {contentType === 'movie' && (
+              <MovieForm
+                formData={formData}
+                setFormData={setFormData}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
+              />
+            )}
 
-      {/* Magic AI Prompt Modal */}
-      <AIStudioPrompt
-        isOpen={isAIOpen}
-        onClose={() => setIsAIOpen(false)}
-        onApplyGeneration={handleApplyAIGeneration}
-      />
+            {contentType === 'music' && (
+              <MusicForm
+                formData={formData}
+                setFormData={setFormData}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
+                recordId={recordId}
+              />
+            )}
+
+            {contentType === 'image' && (
+              <ImageForm
+                formData={formData}
+                setFormData={setFormData}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
+              />
+            )}
+
+            {contentType === 'document' && (
+              <DocumentForm
+                formData={formData}
+                setFormData={setFormData}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
+              />
+            )}
+
+            {contentType === 'info' && (
+              <InfoForm formData={formData} setFormData={setFormData} />
+            )}
+          </div>
+
+          {/* Visual Customization Studio */}
+          <CustomizerPanel
+            customConfig={customConfig}
+            setCustomConfig={setCustomConfig}
+          />
+        </div>
+
+        {/* Right Column: Live QR Preview & Actions */}
+        <QRPreview
+          dataString={qrDataString}
+          title={displayTitle}
+          contentType={contentType}
+          customConfig={customConfig}
+          onSaveRecord={handleSave}
+          isSaving={isSaving}
+          viewerUrl={viewerUrl}
+        />
+
+        {/* Floating QR Quick-View FAB for mobile */}
+        <button
+          type="button"
+          className="mobile-qr-fab"
+          onClick={() => {
+            document.querySelector('.qr-preview-wrapper')?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        >
+          <QrCode size={16} />
+          <span>View QR Preview</span>
+        </button>
+      </div>
     </div>
   );
 };
 
+export default QRStudio;

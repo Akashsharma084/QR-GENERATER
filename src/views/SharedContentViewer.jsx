@@ -443,6 +443,27 @@ export const SharedContentViewer = ({ recordId, onBackToStudio }) => {
                       controls
                       style={{ width: '100%' }}
                     />
+
+                    {/* 1-Tap Listen Full Song on YouTube */}
+                    <a
+                      href={`https://www.youtube.com/results?search_query=${encodeURIComponent((content.trackTitle || '') + ' ' + (content.artistName || ''))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-secondary"
+                      style={{
+                        width: '100%',
+                        fontSize: '0.85rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        padding: '9px 14px',
+                        borderRadius: '12px'
+                      }}
+                    >
+                      <ExternalLink size={15} />
+                      <span>Listen Full Song on YouTube ↗</span>
+                    </a>
                   </div>
                 ) : (
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', margin: '10px 0' }}>
